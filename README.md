@@ -1,5 +1,5 @@
 # \<POINT CLOUD TRANSPORT TUTORIAL>
- **v0.1.**
+ **ROS2 v0.1.**
 
 _**Contents**_
 
@@ -20,51 +20,20 @@ _**Contents**_
 # Writing a Simple Publisher
 In this section, we'll see how to create a publisher node, which opens a .bag file and publishes PointCloud2 messages from it.
 
-This tutorial assumes, that you have created your workspace during [<point_cloud_transport>](https://github.com/paplhjak/point_cloud_transport) [installation](https://github.com/paplhjak/point_cloud_transport#installation). 
+This tutorial assumes that you have created your workspace containing [<point_cloud_transport>](https://github.com/john-maidbot/point_cloud_transport)
 
 Before we start, change to the directory and clone this repository:
 ~~~~~ bash
-$ cd ~/point_cloud_transport_ws/src
-$ git clone https://github.com/paplhjak/point_cloud_transport_tutorial.git
+$ cd ~/<point_cloud_transport_ws>/src
+$ git clone git@github.com:john-maidbot/point_cloud_transport_tutorial.git
 ~~~~~
 
 ## Code of the Publisher
 Take a look at my_publisher.cpp:
 ```cpp
-#include <ros/ros.h>
-#include <sensor_msgs/PointCloud2.h>
-#include <point_cloud_transport/point_cloud_transport.h>
-#include <rosbag/bag.h>
-#include <rosbag/view.h>
 
-int main(int argc, char** argv)
-{
-    ros::init(argc, argv, "point_cloud_publisher");
-    ros::NodeHandle nh;
-
-    point_cloud_transport::PointCloudTransport pct(nh);
-    point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", 10);
-
-    rosbag::Bag bag;
-    bag.open(argv[1], rosbag::bagmode::Read);
-
-    ros::Rate loop_rate(5);
-    for(rosbag::MessageInstance const m: rosbag::View(bag))
-    {
-        sensor_msgs::PointCloud2::ConstPtr i = m.instantiate<sensor_msgs::PointCloud2>();
-        if (i != nullptr)
-        {
-            pub.publish(i);
-            ros::spinOnce();
-            loop_rate.sleep();
-        }
-        if (!nh.ok())
-        {
-         break;
-        }
-    }
-}
 ```
+
 ## Code of Publisher Explained
 Now we'll break down the code piece by piece.
 
@@ -322,5 +291,5 @@ This should display 8.
 Full explanation of the reconfigure parameters and an example of how to use them can be found at [<draco_point_cloud_transport>](https://github.com/paplhjak/draco_point_cloud_transport) repository.
 
 
-# Implementing Custom Plugins
-The process of implementing your own plugins is described in a separate [repository](https://github.com/paplhjak/templateplugin_point_cloud_transport).
+# Implementing Custom Plugins (TODO: john-maidbot, ROS2 port of template coming soon)
+The process of implementing your own plugins is described in a separate [repository](https://github.com/john-maidbot/templateplugin_point_cloud_transport).

@@ -2,18 +2,20 @@
 // SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak
 
 #include <point_cloud_transport/point_cloud_transport.h>
-#include <ros/ros.h>
-#include <rosbag/bag.h>
-#include <rosbag/view.h>
-#include <sensor_msgs/PointCloud2.h>
+
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "point_cloud_publisher");
-  ros::NodeHandle nh;
 
-  point_cloud_transport::PointCloudTransport pct(nh);
+  auto node = std::make_shared<rclcpp::Node>();
+
+  point_cloud_transport::PointCloudTransport pct(node);
   point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", 100);
+
+  rclcpp::spin(node);
 
   rosbag::Bag bag;
   bag.open(argv[1], rosbag::bagmode::Read);
@@ -32,4 +34,5 @@ int main(int argc, char** argv)
     if (!ros::ok())
       break;
   }
+  rclcpp::shutdown();
 }

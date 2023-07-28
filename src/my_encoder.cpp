@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak
 
-#include <cras_cpp_common/log_utils.h>
-#include <dynamic_reconfigure/Config.h>
-#include <point_cloud_transport/point_cloud_codec.h>
-#include <ros/console.h>
-#include <ros/time.h>
-#include <rosbag/bag.h>
-#include <rosbag/view.h>
-#include <rosgraph_msgs/Log.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <point_cloud_transport/point_cloud_codec.hpp>
+
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 int main(int argc, char** argv)
 {
@@ -18,8 +13,7 @@ int main(int argc, char** argv)
   
   point_cloud_transport::PointCloudCodec pct;
   
-  std::string codec = "draco";
-  dynamic_reconfigure::Config config;
+  std::string transport = "draco";
   if (argc > 2)
     codec = argv[2];
   else
