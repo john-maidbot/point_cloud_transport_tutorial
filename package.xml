@@ -1,25 +1,37 @@
 <package format="3">
   <name>point_cloud_transport_tutorial</name>
-  <version>1.0.0</version>
+
+  <version>1.1.0</version>
+
   <description>Tutorial for point_cloud_transport.</description>
+
   <author>Jakub Paplham</author>
-  <maintainer email="peckama2@fel.cvut.cz">Martin Pecka</maintainer>
+
+  <maintainer email="john.dangelo@tailos.com">John D'Angelo</maintainer>
+
   <license>BSD</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
-  <build_depend>cras_cpp_common</build_depend>
   <build_depend>point_cloud_transport</build_depend>
-  <build_depend>rosbag</build_depend>
-  <build_depend>rosgraph_msgs</build_depend>
+  <build_depend>rclcpp</build_depend>
+  <build_depend>rosbag2_cpp</build_depend>
   <build_depend>sensor_msgs</build_depend>
-  <build_depend>topic_tools</build_depend>
 
-  <exec_depend>cras_cpp_common</exec_depend>
   <exec_depend>draco_point_cloud_transport</exec_depend>
   <exec_depend>point_cloud_transport</exec_depend>
-  <exec_depend>rosbag</exec_depend>
-  <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>rosbag2_cpp</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>topic_tools</exec_depend>
+
+  <test_depend>ament_cmake_copyright</test_depend>
+  <test_depend>ament_cmake_cppcheck</test_depend>
+  <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
+  <test_depend>ament_cmake_uncrustify</test_depend>
+  <test_depend>ament_cmake_xmllint</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
 </package>
