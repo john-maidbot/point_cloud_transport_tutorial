@@ -3,36 +3,45 @@
 
 #include <point_cloud_transport/point_cloud_transport.h>
 
+// for reading rosbag
+#include <rclcpp/serialization.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rosbag2_cpp/reader.hpp>
+#include <rosbag2_cpp/converter_interfaces/serialization_format_converter.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "point_cloud_publisher");
+  rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<rclcpp::Node>();
+  auto node = std::make_shared<rclcpp::Node>("point_cloud_publisher");
 
   point_cloud_transport::PointCloudTransport pct(node);
   point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", 100);
 
-  rclcpp::spin(node);
+  std::string bagged_cloud_topic_;
+  std::string bag_file_;
 
-  rosbag::Bag bag;
-  bag.open(argv[1], rosbag::bagmode::Read);
+  rosbag2_cpp::Reader reader;
+  reader.open(bag_file_);
 
-  ros::Rate loop_rate(5);
-  for (const auto& m: rosbag::View(bag))
+  sensor_msgs::msg::PointCloud2 cloud_msg;
+  rclcpp::Serialization<sensor_msgs::msg::PointCloud2> cloud_serialization;
+  rcutils_time_point_value_t cloud_time;
+  while (reader.has_next() && rclcpp::ok())
   {
-    sensor_msgs::PointCloud2::ConstPtr i = m.instantiate<sensor_msgs::PointCloud2>();
-    if (i != nullptr)
+    // get serialized data
+    auto serialized_message = reader.read_next();      
+    rclcpp::SerializedMessage extracted_serialized_msg(*serialized_message->serialized_data);
+    if (serialized_message->topic_name == bagged_cloud_topic_)
     {
-      pub.publish(i);
-      ros::spinOnce();
-      loop_rate.sleep();
+      // deserialize and convert to ros2 message
+      cloud_serialization.deserialize_message(&extracted_serialized_msg, &cloud_msg);
+      pub.publish(cloud_msg);
+      rclcpp::spin_some();
     }
-
-    if (!ros::ok())
-      break;
   }
+  reader.close();
+
   rclcpp::shutdown();
 }
