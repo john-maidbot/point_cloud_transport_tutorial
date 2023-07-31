@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak
 
-#include <point_cloud_transport/point_cloud_transport.h>
+#include <point_cloud_transport/point_cloud_transport.hpp>
 
 // for reading rosbag
 #include <rclcpp/serialization.hpp>
@@ -17,7 +17,7 @@ int main(int argc, char** argv)
   auto node = std::make_shared<rclcpp::Node>("point_cloud_publisher");
 
   point_cloud_transport::PointCloudTransport pct(node);
-  point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", 100);
+  point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", rclcpp::QoS(100).get_rmw_qos_profile());
 
   std::string bagged_cloud_topic_;
   std::string bag_file_;
@@ -27,7 +27,6 @@ int main(int argc, char** argv)
 
   sensor_msgs::msg::PointCloud2 cloud_msg;
   rclcpp::Serialization<sensor_msgs::msg::PointCloud2> cloud_serialization;
-  rcutils_time_point_value_t cloud_time;
   while (reader.has_next() && rclcpp::ok())
   {
     // get serialized data
@@ -38,7 +37,7 @@ int main(int argc, char** argv)
       // deserialize and convert to ros2 message
       cloud_serialization.deserialize_message(&extracted_serialized_msg, &cloud_msg);
       pub.publish(cloud_msg);
-      rclcpp::spin_some();
+      rclcpp::spin_some(node);
     }
   }
   reader.close();

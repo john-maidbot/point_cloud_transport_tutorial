@@ -23,13 +23,13 @@ int main(int argc, char **argv)
 
   std::string bagged_cloud_topic_;
   std::string bag_file_;
+  auto logger_ = rclcpp::get_logger("my_encoder");
 
   rosbag2_cpp::Reader reader;
   reader.open(bag_file_);
 
   sensor_msgs::msg::PointCloud2 cloud_msg;
   rclcpp::Serialization<sensor_msgs::msg::PointCloud2> cloud_serialization;
-  rcutils_time_point_value_t cloud_time;
   while (reader.has_next() && rclcpp::ok())
   {
     // get serialized data
@@ -57,9 +57,9 @@ int main(int argc, char **argv)
       if(encode_success)
       {
         // ->value() is shorthand for .value().value() (unpacking cras::expected, and then cras::optional)
-        fprintf("ENCODE Raw size: %zu, compressed size: %u, ratio: %.2f %%, transport type: %s",
+        RCLCPP_INFO(logger_, "ENCODE Raw size: %zu, compressed size: %zu, ratio: %.2f %%, transport type: %s",
                           original_serialized_size, compressed_msg.size(), 100.0 * compressed_msg.size() / original_serialized_size,
-                          transport);
+                          transport.c_str());
       }
 
       //
@@ -70,9 +70,9 @@ int main(int argc, char **argv)
       if(decode_success)
       {
         // ->value() is shorthand for .value().value() (unpacking cras::expected, and then cras::optional)
-        fprintf("DECODE Raw size: %zu, compressed size: %u, ratio: %.2f %%, transport type: %s",
+        RCLCPP_INFO(logger_, "DECODE Raw size: %zu, compressed size: %zu, ratio: %.2f %%, transport type: %s",
                           original_deserialized_size, decoded_msg.data.size(), 100.0 * decoded_msg.data.size() / original_deserialized_size,
-                          transport);
+                          transport.c_str());
       }
     }
   }
