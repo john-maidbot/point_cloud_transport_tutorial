@@ -32,9 +32,65 @@ $ cd ~/<point_cloud_transport_ws>
 ~~~~~
 
 ## Code of the Publisher
-Take a look at my_publisher.cpp:
+Take a look at my_publisher.cpp
 ```cpp
+#include <point_cloud_transport/point_cloud_transport.hpp>
 
+// for reading rosbag
+#include <ament_index_cpp/get_package_share_directory.hpp>
+#include <rclcpp/serialization.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rosbag2_cpp/reader.hpp>
+#include <rosbag2_cpp/storage_options.hpp>
+#include <rosbag2_cpp/converter_interfaces/serialization_format_converter.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+
+  auto node = std::make_shared<rclcpp::Node>("point_cloud_publisher");
+
+  point_cloud_transport::PointCloudTransport pct(node);
+  point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", 100);
+
+  const std::string bagged_cloud_topic = "/point_cloud";
+  const std::string shared_directory = ament_index_cpp::get_package_share_directory(
+    "point_cloud_transport_tutorial");
+  const std::string bag_file = shared_directory + "/resources/rosbag2_2023_08_05-16_08_51";
+
+  // boiler-plate to tell rosbag2 how to read our bag
+  rosbag2_storage::StorageOptions storage_options;
+  storage_options.uri = bag_file;
+  storage_options.storage_id = "mcap";
+  rosbag2_cpp::ConverterOptions converter_options;
+  converter_options.input_serialization_format = "cdr";
+  converter_options.output_serialization_format = "cdr";
+
+  // open the rosbag
+  rosbag2_cpp::readers::SequentialReader reader;
+  reader.open(storage_options, converter_options);
+
+  sensor_msgs::msg::PointCloud2 cloud_msg;
+  rclcpp::Serialization<sensor_msgs::msg::PointCloud2> cloud_serialization;
+  while (reader.has_next() && rclcpp::ok()) {
+    // get serialized data
+    auto serialized_message = reader.read_next();
+    rclcpp::SerializedMessage extracted_serialized_msg(*serialized_message->serialized_data);
+    if (serialized_message->topic_name == bagged_cloud_topic) {
+      // deserialize and convert to ros2 message
+      cloud_serialization.deserialize_message(&extracted_serialized_msg, &cloud_msg);
+      // publish the message
+      pub.publish(cloud_msg);
+      rclcpp::spin_some(node);
+      rclcpp::sleep_for(std::chrono::milliseconds(100));
+    }
+  }
+  reader.close();
+
+  node.reset();
+  rclcpp::shutdown();
+}
 ```
 
 ## Code of Publisher Explained
@@ -56,12 +112,12 @@ point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", 10);
 Publishes sensor_msgs::PointCloud2 message from the specified rosbag:
 ```cpp
   sensor_msgs::msg::PointCloud2 cloud_msg;
-  //... rosbag boiler plate ...
+  //... rosbag boiler plate to populate cloud_msg ...
   // publish the message
   pub.publish(cloud_msg);
   // spin the node...
   rclcpp::spin_some(node);
-  // etc...
+  // repeat...
 ```
 
 ## Example of Running the Publisher
