@@ -14,14 +14,6 @@ int main(int argc, char ** argv)
   auto node = std::make_shared<rclcpp::Node>("point_cloud_subscriber");
 
   point_cloud_transport::PointCloudTransport pct(node);
-  point_cloud_transport::Subscriber raw_sub = pct.subscribe(
-    "pct/point_cloud", 100,
-    [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
-    {
-      RCLCPP_INFO_STREAM(
-        node->get_logger(),
-        "raw message received, number of points is: " << msg->width * msg->height);
-    });
   auto transport_hint = std::make_shared<point_cloud_transport::TransportHints>("draco");
   point_cloud_transport::Subscriber draco_sub = pct.subscribe(
     "pct/point_cloud", 100,

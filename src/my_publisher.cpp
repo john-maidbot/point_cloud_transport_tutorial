@@ -22,9 +22,7 @@ int main(int argc, char ** argv)
   auto node = std::make_shared<rclcpp::Node>("point_cloud_publisher");
 
   point_cloud_transport::PointCloudTransport pct(node);
-  point_cloud_transport::Publisher pub = pct.advertise(
-    "pct/point_cloud", rclcpp::QoS(
-      100).get_rmw_qos_profile());
+  point_cloud_transport::Publisher pub = pct.advertise("pct/point_cloud", 100);
 
   const std::string bagged_cloud_topic = "/point_cloud";
   const std::string shared_directory = ament_index_cpp::get_package_share_directory(
@@ -52,8 +50,10 @@ int main(int argc, char ** argv)
     if (serialized_message->topic_name == bagged_cloud_topic) {
       // deserialize and convert to ros2 message
       cloud_serialization.deserialize_message(&extracted_serialized_msg, &cloud_msg);
+      // publish the message
       pub.publish(cloud_msg);
       rclcpp::spin_some(node);
+      rclcpp::sleep_for(std::chrono::milliseconds(100));
     }
   }
   reader.close();
