@@ -1,22 +1,38 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak
 
+// This file is a simple example of how to use the C++ "PointCloudTransport" API of
+// point_cloud_transport to subscribe to and decode compressed point_cloud messages via ROS2.
+
 #include <point_cloud_transport/point_cloud_transport.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-void yourCallbackHere(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& msg)
-{
-  RCLCPP_INFO_STREAM(rclcpp::get_logger("point_cloud_subscriber"), "Message received, number of points is: " << msg->width * msg->height);
-}
-
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>("point_cloud_subscriber");
 
   point_cloud_transport::PointCloudTransport pct(node);
-  point_cloud_transport::Subscriber sub = pct.subscribe("pct/point_cloud", 100, yourCallbackHere);
+  point_cloud_transport::Subscriber raw_sub = pct.subscribe(
+    "pct/point_cloud", 100,
+    [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
+    {
+      RCLCPP_INFO_STREAM(
+        node->get_logger(),
+        "raw message received, number of points is: " << msg->width * msg->height);
+    });
+  auto transport_hint = std::make_shared<point_cloud_transport::TransportHints>("draco");
+  point_cloud_transport::Subscriber draco_sub = pct.subscribe(
+    "pct/point_cloud", 100,
+    [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
+    {
+      RCLCPP_INFO_STREAM(
+        node->get_logger(),
+        "draco message received, number of points is: " << msg->width * msg->height);
+    }, {}, transport_hint.get());
+
+  RCLCPP_INFO_STREAM(node->get_logger(), "Waiting for point_cloud message...");
 
   rclcpp::spin(node);
 
@@ -24,4 +40,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-

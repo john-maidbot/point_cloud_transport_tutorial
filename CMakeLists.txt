@@ -15,6 +15,7 @@ endif()
 find_package(ament_cmake_ros REQUIRED)
 
 find_package(point_cloud_transport REQUIRED)
+find_package(point_cloud_transport_plugins REQUIRED)
 find_package(rclcpp REQUIRED) 
 find_package(rosbag2_cpp REQUIRED) 
 find_package(sensor_msgs REQUIRED)
@@ -42,6 +43,12 @@ install(
     publisher_test
     subscriber_test
   RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY
+    resources
+  DESTINATION share/${PROJECT_NAME}
 )
 
 # linting tests
