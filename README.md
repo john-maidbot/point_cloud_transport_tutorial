@@ -29,6 +29,7 @@ $ git clone https://github.com/ros-perception/point_cloud_transport_tutorial
 $ cd point_cloud_transport_tutorial
 $ tar -C resources/ -xvf resources/rosbag2_2023_08_05-16_08_51.tar.xz
 $ cd ~/<point_cloud_transport_ws>
+$ colcon build --merge-install --event-handlers console_direct+
 ```
 
 ## Code of the Publisher
@@ -171,7 +172,7 @@ int main(int argc, char ** argv)
 ## Code of Subscriber Explained
 Now we'll break down the code piece by piece.
 
-Header for including [<point_cloud_transport>](https://github.com/john-maidbot/point_cloud_transport):
+Header for including [<point_cloud_transport>](https://github.com/ros-perception/point_cloud_transport):
 
 ```cpp
 #include <point_cloud_transport/point_cloud_transport.hpp>
@@ -329,6 +330,7 @@ Shut down your publisher node and restart it. If you list the published topics a
 ```
 
 ```bash
+ros2 run point_cloud_transport_tutorial my_subscriber --ros-args -r __node:=draco_listener -p point_cloud_transport:=<point_cloud_transport_type>
 ros2 run point_cloud_transport_tutorial my_subscriber --ros-args -r __node:=draco_listener -p point_cloud_transport:=draco
 ```
 
@@ -341,7 +343,7 @@ rqt_graph
 ![Graph2](https://github.com/ros-perception/point_cloud_transport_tutorial/blob/rolling/readme_images/rosgraph2.png)
 
 ## Changing Transport Behavior
-For a particular transport, we may want to tweak settings such as compression level and speed, quantization of particular attributes of point cloud, etc. Transport plugins can expose such settings through rqt_reconfigure. For example, /point_cloud_transport/draco/ allows you to change multiple parameters of the compression on the fly.
+For a particular transport, we may want to tweak settings such as compression level and speed, quantization of particular attributes of point cloud, etc. Transport plugins can expose such settings through `rqt_reconfigure`. For example, `/point_cloud_transport/draco/` allows you to change multiple parameters of the compression on the fly.
 
 For now let's adjust the position quantization. By default, "draco" transport uses quantization of 14 bits, allowing 16384 distinquishable positions in each axis; let's change it to 8 bits (256 positions):
 
