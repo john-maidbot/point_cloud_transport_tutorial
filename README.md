@@ -191,14 +191,30 @@ Creates *PointCloudTransport* instance and initializes it with our *Node*. Metho
 point_cloud_transport::PointCloudTransport pct(node);
 ```
 
-Creates a *TransportHint* shared pointer. This is how to tell the subscriber that we want to subscribe
-to a particular transport (in this case "pct/point_cloud/draco"), rather than the raw "pct/point_cloud" topic.
+Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/point_cloud"*. The second argument is the size of our subscribing queue. The third argument tells the subscriber to execute lambda function whenever a message is received. And lastly, we pass in our transport hint.
+
+```cpp
+  point_cloud_transport::Subscriber draco_sub = pct.subscribe(
+    "pct/point_cloud", 100,
+    [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
+    {
+      RCLCPP_INFO_STREAM(
+        node->get_logger(),
+        "draco message received, number of points is: " << msg->width * msg->height);
+    }, {});
+```
+
+### Select a specific transport
+
+Or you can select a specific transport using the *TransportHint* class. Creates a *TransportHint* shared pointer.
+This is how to tell the subscriber that we want to subscribe to a particular transport
+(in this case "pct/point_cloud/draco"), rather than the raw "pct/point_cloud" topic.
 
 ```cpp
   auto transport_hint = std::make_shared<point_cloud_transport::TransportHints>("draco");
 ```
 
-Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/point_cloud"*. The second argument is the size of our subscribing queue. The third argument tells the subscriber to execute lambda function whenever a message is received. And lastly, we pass in our transport hint.
+Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/point_cloud"* and add the `transport_hint` variable as the last argument.
 
 ```cpp
   auto transport_hint = std::make_shared<point_cloud_transport::TransportHints>("draco");
@@ -210,20 +226,6 @@ Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/poi
         node->get_logger(),
         "draco message received, number of points is: " << msg->width * msg->height);
     }, {}, transport_hint.get());
-```
-
-or using the *TransportHint*:
-
-```cpp
-  auto transport_hint = std::make_shared<point_cloud_transport::TransportHints>("draco");
-  point_cloud_transport::Subscriber draco_sub = pct.subscribe(
-    "pct/point_cloud", 100,
-    [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
-    {
-      RCLCPP_INFO_STREAM(
-        node->get_logger(),
-        "draco message received, number of points is: " << msg->width * msg->height);
-    }, {});
 ```
 
 ## Example of Running the Subscriber
