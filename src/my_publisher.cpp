@@ -6,10 +6,13 @@
 
 #include <point_cloud_transport/point_cloud_transport.hpp>
 
+#include <iostream>
+
 // for reading rosbag
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <rclcpp/serialization.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rcpputils/filesystem_helper.hpp>
 #include <rosbag2_cpp/reader.hpp>
 #include <rosbag2_cpp/storage_options.hpp>
 #include <rosbag2_cpp/converter_interfaces/serialization_format_converter.hpp>
@@ -27,7 +30,20 @@ int main(int argc, char ** argv)
   const std::string bagged_cloud_topic = "/point_cloud";
   const std::string shared_directory = ament_index_cpp::get_package_share_directory(
     "point_cloud_transport_tutorial");
-  const std::string bag_file = shared_directory + "/resources/rosbag2_2023_08_05-16_08_51";
+  std::string bag_file = shared_directory + "/resources/rosbag2_2023_08_05-16_08_51";
+
+  if (argc > 1)
+  {
+    bag_file = argv[1];
+  }
+
+  if (!rcpputils::fs::exists(bag_file))
+  {
+    std::cout << "Not able to open file [" << bag_file << "]" << '\n';
+    return -1;
+  }
+
+  std::cout << "Reading [" << bag_file << "] bagfile" << '\n';
 
   // boiler-plate to tell rosbag2 how to read our bag
   rosbag2_storage::StorageOptions storage_options;

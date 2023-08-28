@@ -16,8 +16,9 @@ find_package(ament_cmake_ros REQUIRED)
 
 find_package(point_cloud_transport REQUIRED)
 find_package(point_cloud_transport_plugins REQUIRED)
-find_package(rclcpp REQUIRED) 
-find_package(rosbag2_cpp REQUIRED) 
+find_package(rclcpp REQUIRED)
+find_package(rcpputils REQUIRED)
+find_package(rosbag2_cpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 include_directories(
@@ -30,7 +31,7 @@ ament_target_dependencies(encoder_test point_cloud_transport rosbag2_cpp sensor_
 
 # publisher
 add_executable(publisher_test src/my_publisher.cpp)
-ament_target_dependencies(publisher_test point_cloud_transport rclcpp rosbag2_cpp sensor_msgs)
+ament_target_dependencies(publisher_test point_cloud_transport rclcpp rcpputils rosbag2_cpp sensor_msgs)
 
 # subscriber
 add_executable(subscriber_test src/my_subscriber.cpp)
