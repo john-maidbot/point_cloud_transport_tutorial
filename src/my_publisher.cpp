@@ -32,20 +32,15 @@ int main(int argc, char ** argv)
     "point_cloud_transport_tutorial");
   std::string bag_file = shared_directory + "/resources/rosbag2_2023_08_05-16_08_51";
 
+  if (argc > 1)
+  {
+    bag_file = argv[1];
+  }
+
   if (!rcpputils::fs::exists(bag_file))
   {
-    std::cout << "Not able to open file 1 [" << bag_file << "]" << '\n';
+    std::cout << "Not able to open file [" << bag_file << "]" << '\n';
     return -1;
-  } else {
-    if (argc > 1)
-    {
-      bag_file = argv[1];
-      if (!rcpputils::fs::exists(bag_file))
-      {
-        std::cout << "Not able to open file [" << bag_file << "]" << '\n';
-        return -1;
-      }
-    }
   }
 
   std::cout << "Reading [" << bag_file << "] bagfile" << '\n';
