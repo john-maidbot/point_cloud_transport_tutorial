@@ -150,7 +150,7 @@ int main(int argc, char ** argv)
   auto node = std::make_shared<rclcpp::Node>("point_cloud_subscriber");
 
   point_cloud_transport::PointCloudTransport pct(node);
-  point_cloud_transport::Subscriber draco_sub = pct.subscribe(
+  point_cloud_transport::Subscriber pct_sub = pct.subscribe(
     "pct/point_cloud", 100,
     [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
     {
@@ -194,7 +194,7 @@ point_cloud_transport::PointCloudTransport pct(node);
 Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/point_cloud"*. The second argument is the size of our subscribing queue. The third argument tells the subscriber to execute lambda function whenever a message is received. And lastly, we pass in our transport hint.
 
 ```cpp
-  point_cloud_transport::Subscriber draco_sub = pct.subscribe(
+  point_cloud_transport::Subscriber pct_sub = pct.subscribe(
     "pct/point_cloud", 100,
     [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
     {
@@ -218,7 +218,7 @@ Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/poi
 
 ```cpp
   auto transport_hint = std::make_shared<point_cloud_transport::TransportHints>("draco");
-  point_cloud_transport::Subscriber draco_sub = pct.subscribe(
+  point_cloud_transport::Subscriber pct_sub = pct.subscribe(
     "pct/point_cloud", 100,
     [node](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
     {
