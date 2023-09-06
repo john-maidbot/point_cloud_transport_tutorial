@@ -191,7 +191,7 @@ Creates *PointCloudTransport* instance and initializes it with our *Node*. Metho
 point_cloud_transport::PointCloudTransport pct(node);
 ```
 
-Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/point_cloud"*. The second argument is the size of our subscribing queue. The third argument tells the subscriber to execute lambda function whenever a message is received. And lastly, we pass in our transport hint.
+Uses *PointCloudTransport* method to create a subscriber on base topic *"pct/point_cloud"*. The second argument is the size of our subscribing queue. The third argument tells the subscriber to execute lambda function whenever a message is received.
 
 ```cpp
   point_cloud_transport::Subscriber pct_sub = pct.subscribe(
@@ -235,6 +235,8 @@ To run my_subscriber.cpp, open terminal in the root of workspace and run the fol
 $ source install/setup.bash
 $ ros2 run point_cloud_transport_tutorial subscriber_test --ros-args -p point_cloud_transport:=draco
 ```
+
+The `point_cloud_transport` parameter is read by the point_cloud_transport library. The complexity of the parameters is hidden in the library.
 
 # Using Publishers And Subscribers With Plugins
 
