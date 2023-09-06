@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     rclpy.init(args=sys.argv)
 
-    bag_path = "/home/ahcorde/ros2_rolling/src/point_cloud_transport_tutorial/resources/rosbag2_2023_08_05-16_08_51"
+    bag_path = argv[1]
     serialization_format='cdr'
 
     storage_options = rosbag2_py.StorageOptions(
