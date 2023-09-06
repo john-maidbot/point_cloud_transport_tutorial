@@ -42,6 +42,7 @@ from rclpy.serialization import deserialize_message, serialize_message
 from sensor_msgs.msg import PointCloud2
 import rosbag2_py
 from rosidl_runtime_py.utilities import get_message
+from point_cloud_transport_py.common import pointCloud2ToString
 
 def pointCloud2ToString(msg: PointCloud2):
     buffer = serialize_message(msg)
@@ -77,7 +78,6 @@ if __name__ == '__main__':
             (topic, data, t) = reader.read_next()
             msg_type = get_message(type_map[topic])
             msg = deserialize_message(data, msg_type)
-            msg2 = PointCloud2()
             pub.publish(pointCloud2ToString(msg))
             time.sleep(0.1)
     except Exception as e:
