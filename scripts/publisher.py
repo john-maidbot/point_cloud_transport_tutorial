@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     rclpy.init(args=sys.argv)
 
-    bag_path = argv[1]
+    bag_path = sys.argv[1]
     serialization_format='cdr'
 
     storage_options = rosbag2_py.StorageOptions(

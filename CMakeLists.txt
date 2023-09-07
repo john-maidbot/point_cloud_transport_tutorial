@@ -52,6 +52,12 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  scripts/publisher.py
+  scripts/subscriber_old_school.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # linting tests
 if(BUILD_TESTING)
   find_package(ament_cmake_copyright REQUIRED)

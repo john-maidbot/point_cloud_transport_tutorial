@@ -16,7 +16,7 @@
 
 #include <point_cloud_transport/point_cloud_codec.hpp>
 
-int main(int argc, char ** argv)
+int main(int /*argc*/, char ** /*argv*/)
 {
   auto logger_ = rclcpp::get_logger("my_encoder");
 
