@@ -14,7 +14,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rcpputils/filesystem_helper.hpp>
 #include <rosbag2_cpp/reader.hpp>
-#include <rosbag2_cpp/storage_options.hpp>
+#include <rosbag2_storage/storage_options.hpp>
 #include <rosbag2_cpp/converter_interfaces/serialization_format_converter.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
