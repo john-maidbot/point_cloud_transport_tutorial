@@ -15,7 +15,6 @@ endif()
 find_package(ament_cmake_ros REQUIRED)
 
 find_package(point_cloud_transport REQUIRED)
-find_package(point_cloud_transport_plugins REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rcpputils REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
